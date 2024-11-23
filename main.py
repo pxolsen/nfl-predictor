@@ -3,10 +3,20 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from predictor import predict_weekly_scores
+from fastapi.middleware.cors import CORSMiddleware
+
 
 # Initialize FastAPI app
 app = FastAPI()
 
+# Add this middleware to handle CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (or specify your frontend URL for more security)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Define the request model
 class PredictionRequest(BaseModel):
     year: int
@@ -28,3 +38,4 @@ async def get_predictions(request: PredictionRequest):
         return predictions
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
